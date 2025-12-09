@@ -1,0 +1,29 @@
+name: 'nyc_911_analytics'
+version: '1.0.0'
+config-version: 2
+
+profile: 'nyc_911_profile' # Esto debe coincidir con profiles.yml
+
+model-paths: ["models"]
+analysis-paths: ["analyses"]
+test-paths: ["tests"]
+seed-paths: ["seeds"]
+macro-paths: ["macros"]
+snapshot-paths: ["snapshots"]
+
+target-path: "target"
+clean-targets:
+  - "target"
+  - "dbt_packages"
+
+# Configuración de carpetas
+models:
+  nyc_911_analytics:
+    # Materialización por defecto para staging: vista
+    staging:
+      +materialized: view
+      +schema: staging
+    # Materialización por defecto para marts: tabla
+    marts:
+      +materialized: table
+      +schema: analytics

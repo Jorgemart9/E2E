@@ -1,0 +1,43 @@
+version: 2
+
+models:
+  - name: fct_incidents
+    description: >
+      Tabla de hechos con incidentes procesados.
+      Incluye lógica de imputación espacial para asignar barrios (Boroughs)
+      basados en coordenadas cuando el dato original es nulo.
+    columns:
+      - name: event_id
+        description: "Identificador único del evento CAD."
+        tests:
+          - unique
+          - not_null
+
+      - name: incident_type_description
+        description: "Descripción del tipo de incidente (ej. Robo, Fuego, etc.)."
+
+      - name: borough
+        description: >
+          Nombre del distrito de NYC. 
+          NOTA: Si el dato original era nulo, se ha calculado basado en la distancia
+          mínima a los centroides de cada barrio.
+        tests:
+          - not_null:
+              config:
+                severity: warn # Te avisará si quedan nulos sin romper la ejecución
+          - accepted_values:
+              values: ['MANHATTAN', 'BRONX', 'BROOKLYN', 'QUEENS', 'STATEN ISLAND']
+      
+      - name: response_time_minutes
+        description: "Tiempo (en minutos) desde el despacho hasta la llegada de la unidad."
+        tests:
+          - not_null
+
+      - name: total_duration_minutes
+        description: "Duración total del incidente (en minutos) desde creación hasta cierre."
+
+      - name: latitude
+        description: "Coordenada Y de la ubicación del incidente."
+
+      - name: longitude
+        description: "Coordenada X de la ubicación del incidente."

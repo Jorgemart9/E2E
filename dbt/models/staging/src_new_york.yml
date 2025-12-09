@@ -1,0 +1,14 @@
+version: 2
+
+sources:
+  - name: raw_nyc_data # Nombre lógico para dbt
+    database: new_york
+    schema: public
+    tables:
+      - name: 911_calls # El nombre real de tu tabla en Postgres
+        description: "Datos crudos de llamadas al 911 de NYC Open Data"
+        columns:
+          - name: cad_evnt_id
+            tests:
+              - unique
+              - not_null

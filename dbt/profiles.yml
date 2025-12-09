@@ -1,0 +1,12 @@
+nyc_911_profile:
+  target: dev
+  outputs:
+    dev:
+      type: postgres
+      host: localhost      # O tu IP del servidor
+      user: tu_usuario     # Tu usuario de Postgres
+      password: tu_password
+      port: 5432
+      dbname: new_york     # La base de datos que mencionaste "\c new_york"
+      schema: public       # Donde creaste la tabla '911_calls'
+      threads: 4
