@@ -31,7 +31,7 @@ def procesar_datos(cont):
             geo_cd_y = datos["geo_cd_y"]
             radio_code = datos["radio_code"]
             typ_desc = datos["typ_desc"]
-            zip_jobs = datos["zip_jobs"]
+            cip_jobs = datos["cip_jobs"]
             add_ts = datos["add_ts"]
             disp_ts = datos["disp_ts"]
             arrivd_ts = datos["arrivd_ts"]
@@ -50,7 +50,7 @@ def procesar_datos(cont):
                 'geo_cd_y': geo_cd_y,
                 'radio_code': radio_code,
                 'typ_desc': typ_desc,
-                'cip_jobs': zip_jobs,
+                'cip_jobs': cip_jobs,
                 'add_ts': add_ts,
                 'disp_ts': disp_ts,
                 'arrivd_ts': arrivd_ts,
