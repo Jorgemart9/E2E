@@ -43,10 +43,25 @@ def ingest_icad_events():
         
         # 3. Definimos la consulta COPY con las columnas de icad_events
         sql = """
-        COPY icad_events (
-            cad_evnt_id, create_date, incident_date, incident_time, nypd_pct_cd, 
-            boro_nm, patrl_boro_nm, geo_cd_x, geo_cd_y, radio_code, typ_desc, 
-            cip_jobs, add_ts, disp_ts, arrivd_ts, closng_ts, latitude, longitude
+        COPY emergency_calls (
+            cad_evnt_id,
+            create_date,
+            incident_date,
+            incident_time,
+            nypd_pct_cd,
+            boro_nm,
+            patrl_boro_nm,
+            geo_cd_x,
+            geo_cd_y,
+            radio_code,
+            typ_desc,
+            cip_jobs,
+            add_ts,
+            disp_ts,
+            arrivd_ts,
+            closng_ts,
+            latitude,
+            longitude
         )
         FROM STDIN
         WITH (FORMAT CSV, HEADER)

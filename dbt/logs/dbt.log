@@ -46,3 +46,30 @@ Runtime Error
 [0m16:27:57.853464 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'end', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x772ddf6fdc70>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x772ddde56b70>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x772ddda6e720>]}
 [0m16:27:57.854093 [debug] [MainThread]: Flushing usage events
 [0m16:27:57.877793 [debug] [MainThread]: An error was encountered while trying to flush usage events
+[0m17:22:32.193335 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'start', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7bd7b59e0440>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7bd7b572d610>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7bd7b572e210>]}
+
+
+Runtime Error
+  No dbt_project.yml found at expected path /usr/app/dbt/dbt_project.yml
+  Verify that each entry within packages.yml (and their transitive dependencies) contains a file named dbt_project.yml
+  
+[0m17:22:32.207167 [debug] [MainThread]: Resource report: {"command_name": "deps", "command_success": false, "command_wall_clock_time": 0.09455377, "process_in_blocks": "0", "process_kernel_time": 0.214876, "process_mem_max_rss": "101748", "process_out_blocks": "3240", "process_user_time": 2.474583}
+[0m17:22:32.207846 [debug] [MainThread]: Command `dbt deps` failed at 17:22:32.207676 after 0.10 seconds
+[0m17:22:32.208313 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'end', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7bd7b97c2900>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7bd7b500ca40>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7bd7b500c950>]}
+[0m17:22:32.208797 [debug] [MainThread]: Flushing usage events
+[0m17:22:32.218071 [debug] [MainThread]: An error was encountered while trying to flush usage events
+[0m17:23:19.816314 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'start', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7881ef387ef0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7881ef622cf0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7881ef9256d0>]}
+
+
+Runtime Error
+  No dbt_project.yml found at expected path /usr/app/dbt/dbt_project.yml
+  Verify that each entry within packages.yml (and their transitive dependencies) contains a file named dbt_project.yml
+  
+[0m17:23:19.824889 [debug] [MainThread]: Resource report: {"command_name": "deps", "command_success": false, "command_wall_clock_time": 0.09194979, "process_in_blocks": "0", "process_kernel_time": 0.180913, "process_mem_max_rss": "99124", "process_out_blocks": "8", "process_user_time": 2.020033}
+[0m17:23:19.825513 [debug] [MainThread]: Command `dbt deps` failed at 17:23:19.825362 after 0.09 seconds
+[0m17:23:19.825969 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'end', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7881f328e900>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7881ef0bf440>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7881ef386c60>]}
+[0m17:23:19.826467 [debug] [MainThread]: Flushing usage events
+[0m17:23:19.832548 [debug] [MainThread]: An error was encountered while trying to flush usage events
+[0m17:24:06.010142 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'start', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x707911089430>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x707910d90470>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7079106fd940>]}
+
+

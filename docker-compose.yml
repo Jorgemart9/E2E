@@ -5,7 +5,7 @@ services:
     env_file: .env
     volumes:
       - postgres-data:/var/lib/postgresql/data
-      - ./docker-init:/docker-entrypoint-initdb.d
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
     ports:
       - "5432:5432"
     healthcheck:
@@ -65,7 +65,29 @@ services:
       context: ./ingestion
       dockerfile: Dockerfile.pyIngestion
     image: ingestion:latest
+  ingestion_311:
+    build:
+      context: ./ingestion
+      dockerfile: Dockerfile.311
+    image: ingestion_311:latest
+    container_name: ingestion_311
+    depends_on:
+      - db
+    networks:
+      - dp1_network
 
+  # Ingestion 911
+  ingestion_911:
+    build:
+      context: ./ingestion
+      dockerfile: Dockerfile.911
+    image: ingestion_911:latest
+    container_name: ingestion_911
+    depends_on:
+      - db
+    networks:
+      - dp1_network
+      
   # Dashboard
   dashboard:
     build:
