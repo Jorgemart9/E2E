@@ -21,3 +21,16 @@ CREATE TABLE IF NOT EXISTS emergency_calls (
     latitude           DOUBLE PRECISION,
     longitude          DOUBLE PRECISION
 );
+
+CREATE TABLE IF NOT EXISTS central_coordinates (
+    boro_nm        TEXT PRIMARY KEY,
+    latitude       DOUBLE PRECISION,
+    longitude      DOUBLE PRECISION
+);
+
+INSERT INTO central_coordinates (boro_nm, latitude, longitude) VALUES
+('BRONX', 40.8448, -73.8648),
+('BROOKLYN', 40.6782, -73.9442),
+('MANHATTAN', 40.7831, -73.9712),
+('QUEENS', 40.7282, -73.7949),
+('STATEN ISLAND', 40.5795, -74.1502);
