@@ -5,7 +5,7 @@ sources:
     database: new_york
     schema: public
     tables:
-      - name: 911_calls # El nombre real de tu tabla en Postgres
+      - name: emergency_calls # El nombre real de tu tabla en Postgres
         description: "Datos crudos de llamadas al 911 de NYC Open Data"
         columns:
           - name: cad_evnt_id

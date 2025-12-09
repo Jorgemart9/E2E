@@ -26,4 +26,4 @@ models:
     # Materialización por defecto para marts: tabla
     marts:
       +materialized: table
-      +schema: analytics
+      +schema: public

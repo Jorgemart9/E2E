@@ -1,0 +1,12 @@
+
+    
+    
+    truncate table "new_york"."public"."borough_centroids";
+    -- dbt seed --
+    
+          insert into "new_york"."public"."borough_centroids" ("borough_name", "centroid_lat", "centroid_lon") values
+          (%s,%s,%s),(%s,%s,%s),(%s,%s,%s),(%s,%s,%s),(%s,%s,%s)
+      
+
+;
+  

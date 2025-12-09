@@ -3,10 +3,10 @@ nyc_911_profile:
   outputs:
     dev:
       type: postgres
-      host: localhost      # O tu IP del servidor
-      user: tu_usuario     # Tu usuario de Postgres
-      password: tu_password
+      host: db      # <--- CAMBIA 'localhost' POR 'database'
+      user: postgres    # <--- OJO: Asegúrate de que esto coincide con el docker-compose
+      password: postgres # <--- OJO: Asegúrate de que esto coincide con el docker-compose
       port: 5432
-      dbname: new_york     # La base de datos que mencionaste "\c new_york"
-      schema: public       # Donde creaste la tabla '911_calls'
+      dbname: new_york
+      schema: public
       threads: 4
