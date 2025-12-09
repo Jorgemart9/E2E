@@ -37,7 +37,6 @@ services:
     build:
       context: ./API
       dockerfile: Dockerfile.API
-    image: e2e-api
     ports:
       - "5000:5000"
     env_file: .env
