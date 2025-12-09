@@ -79,7 +79,7 @@ def ingest_icad_events():
         # Hacemos rollback si algo falla
         if connection:
             connection.rollback()
-        return jsonify({'error': str(e)}), 500
+        return jsonify({'error': "Something happened with the database"}), 500
 
 # -----------------------------------------------------------
 # NUEVA RUTA PARA 311_CALLS
@@ -139,6 +139,31 @@ def ingest_311_calls():
             connection.rollback()
         return jsonify({'error': f'Error durante la ingesta de 311: {str(e)}'}), 500
 
+@app.route('/emergency_calls', methods=['GET'])
+def get_emergency_calls():
+    if not connection:
+        return jsonify({'error': 'No hay conexión a la base de datos'}), 500
+
+    try:
+        with connection.cursor() as cur:
+            cur.execute("""
+                SELECT 
+                    ec.*,
+                    cc.latitude AS central_latitude,
+                    cc.longitude AS central_longitude
+                FROM emergency_calls ec
+                LEFT JOIN central_coordinates cc
+                    ON ec.boro_nm = cc.boro_nm
+            """)
+            
+            rows = cur.fetchall()
+            colnames = [desc[0] for desc in cur.description]
+            results = [dict(zip(colnames, row)) for row in rows]
+
+        return jsonify(results), 200
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
