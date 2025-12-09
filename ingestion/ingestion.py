@@ -86,7 +86,6 @@ def procesar_datos(cont):
     else:
         print("No se generaron datos para insertar.")
     return cont
-
 if __name__ == "__main__":
     print("Incluyendo datos en la API...")
 
