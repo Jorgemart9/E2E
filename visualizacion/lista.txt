@@ -1,0 +1,9 @@
+Tabla con las coordenadas centrales de los BOROUGH
+Checkear el tratamiento de los null
+Tratamiento de los delitos, estan demasiado desagregados y no entendemos muchos
+Explorar la posibilidad de un índice de criminalidad para obtener una visión global
+Calcular el tiempo de llegada de la policia
+Necesitamos GETS:
+- Un get global cliente pesado
+- Un get agrupado por barrio y tipo de delito que incluya las coordenadas centrales de los barrios y el tiempo de llegada
+- Un get de datos de un barrio especifico. Si nosotros ponemos /barrio?barrio="bronx" que nos devuelva solo los datos del bronx
