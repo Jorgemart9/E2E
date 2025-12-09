@@ -1,5 +1,6 @@
 import pandas as pd
 import plotly.graph_objects as go
+from dash import Dash, dcc, html
 
 df = pd.read_csv('NYPD_Calls_for_Service_(Year_to_Date)_20251209-2.csv')
 df = pd.DataFrame(df)
@@ -95,4 +96,13 @@ fig.update_layout(
     margin={"r":0,"t":80,"l":0,"b":0}
 )
 
-fig.show()
+# Crear la aplicación Dash
+app = Dash(__name__)
+
+app.layout = html.Div([
+    html.H1("Mapa de Llamadas NYPD", style={"textAlign": "center", "marginBottom": 20}),
+    dcc.Graph(figure=fig, style={"height": "90vh"})
+])
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=8050, debug=False)
