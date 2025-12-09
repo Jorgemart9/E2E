@@ -124,7 +124,7 @@ def ingest_311_calls():
         WITH (FORMAT CSV, HEADER, DELIMITER ',')  -- <-- ¡ESTE ES EL CAMBIO!
         """
         
-        # 4. Ejecutamos el copy dentro de un cursor transaccional
+        # 4. Ejecutamos el copy dentro de un cursor transaccionalaaa
         with connection.cursor() as cur:
             with cur.copy(sql) as copy:
                 copy.write(stream.getvalue())
