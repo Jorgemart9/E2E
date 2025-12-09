@@ -10,13 +10,38 @@ except FileNotFoundError:
     # Datos dummy para prueba
     data = {
         'BORO_NM': ['MANHATTAN', 'QUEENS', 'BROOKLYN', 'BRONX', 'STATEN ISLAND', None] * 20,
-        'TYP_DESC': ['ROBBERY', 'BURGLARY', 'ASSAULT', 'LARCENY', 'DRUGS', 'ROBBERY'] * 20
+        'TYP_DESC': ['ROBBERY', 'BURGLARY', 'ASSAULT', 'LARCENY', 'DRUGS', 'ROBBERY'] * 20,
+        'ARRIVD_TS': ['2025-01-01 12:00:00'] * 120,
+        'DISP_TS': ['2025-01-01 11:50:00'] * 120,
+        'CLOSNG_TS': ['2025-01-01 12:30:00'] * 120
     }
     df = pd.DataFrame(data)
 
 # Limpieza básica
 df = df.dropna(subset=['BORO_NM'])
 df['BORO_NM'] = df['BORO_NM'].astype(str).str.upper().str.strip()
+
+# --- Calcular tiempos medios por borough ---
+def calcular_tiempos(df):
+    # Convertir a datetime
+    df = df.copy()
+    date_format = "%Y-%m-%d %H:%M:%S"
+    for col in ['ARRIVD_TS', 'DISP_TS', 'CLOSNG_TS']:
+        if col in df.columns:
+            df[col] = pd.to_datetime(df[col], format=date_format, errors='coerce')
+    # Tiempo de llegada: ARRIVD_TS - DISP_TS
+    df['tiempo_llegada'] = (df['ARRIVD_TS'] - df['DISP_TS']).dt.total_seconds() / 60
+    # Tiempo de duración: CLOSNG_TS - ARRIVD_TS
+    df['tiempo_duracion'] = (df['CLOSNG_TS'] - df['ARRIVD_TS']).dt.total_seconds() / 60
+    # Agrupar por borough
+    tabla = df.groupby('BORO_NM').agg({
+        'tiempo_llegada': 'mean',
+        'tiempo_duracion': 'mean'
+    }).reset_index()
+    tabla = tabla.round({'tiempo_llegada': 2, 'tiempo_duracion': 2})
+    return tabla
+
+tabla_tiempos = calcular_tiempos(df)
 
 # 2. Datos Geográficos y Población
 info_distritos = {
@@ -158,10 +183,99 @@ fig.update_layout(
 
 app = Dash(__name__)
 
+from dash.dependencies import Input, Output, State
+
 app.layout = html.Div([
     html.H1("Análisis de Criminalidad NYPD", style={"textAlign": "center", "fontFamily": "Arial"}),
-    dcc.Graph(figure=fig, style={"height": "90vh"})
+    html.Div([
+        html.Div([
+            dcc.Graph(id="mapa-crimen", figure=fig, style={"height": "90vh", "width": "100%"})
+        ], style={"width": "66%", "display": "inline-block", "verticalAlign": "top"}),
+        html.Div([
+            html.Div(id="tabla-tiempos", style={"display": "none"})
+        ], style={"width": "33%", "display": "inline-block", "verticalAlign": "top", "paddingLeft": "20px"})
+    ], style={"width": "100%", "display": "flex"}),
+    dcc.Store(id="dropdown-delito", storage_type="memory")
 ])
+
+# Callback para mostrar la tabla solo al hacer clic en una burbuja
+from dash.dependencies import Input, Output, State
+
+# Callback para guardar el delito seleccionado en el dropdown
+@app.callback(
+    Output("dropdown-delito", "data"),
+    Input("mapa-crimen", "relayoutData"),
+    State("dropdown-delito", "data")
+)
+def guardar_delito(relayoutData, prev):
+    # Detectar el título del gráfico para saber el delito seleccionado
+    if relayoutData and "title.text" in relayoutData:
+        titulo = relayoutData["title.text"]
+        # Si el título contiene un delito específico
+        if "Total de Delitos: " in titulo:
+            delito = titulo.replace("Total de Delitos: ", "").split(" (")[0]
+            return delito
+        elif "Índice de Criminalidad" in titulo:
+            return None
+    return prev
+
+# Callback para mostrar la tabla solo al hacer clic en una burbuja o según el dropdown
+@app.callback(
+    Output("tabla-tiempos", "children"),
+    Output("tabla-tiempos", "style"),
+    Input("mapa-crimen", "clickData"),
+    Input("dropdown-delito", "data")
+)
+def mostrar_tabla(clickData, delito_seleccionado):
+    # Si no hay burbuja ni delito, ocultar
+    if clickData is None and not delito_seleccionado:
+        return None, {"display": "none"}
+
+    # Si hay burbuja pulsada
+    if clickData and "points" in clickData:
+        punto = clickData["points"][0]
+        boro = punto["text"]
+        # Si hay delito seleccionado, filtrar por ese delito y ese borough
+        if delito_seleccionado:
+            df_filtrado = df[(df["BORO_NM"] == boro) & (df["TYP_DESC"] == delito_seleccionado)]
+        else:
+            df_filtrado = df[df["BORO_NM"] == boro]
+        tabla = calcular_tiempos(df_filtrado)
+        if tabla.empty:
+            return html.Div(f"No hay datos para {boro}"), {"display": "block"}
+        row = tabla.iloc[0]
+        tabla_md = (
+            html.H2(f"Tiempos Medios: {boro}", style={"textAlign": "center"}),
+            dcc.Markdown(
+                f"""
+| Borough | Minutos llegada | Minutos duración |
+|---------|----------------|------------------|
+| {row['BORO_NM']} | {row['tiempo_llegada']:.2f} | {row['tiempo_duracion']:.2f} |
+""", style={"fontSize": "18px", "fontFamily": "Arial"}
+            )
+        )
+        return tabla_md, {"display": "block"}
+
+    # Si hay delito seleccionado pero no burbuja pulsada, mostrar tabla para ese delito en todos los boroughs
+    if delito_seleccionado:
+        df_filtrado = df[df["TYP_DESC"] == delito_seleccionado]
+        tabla = calcular_tiempos(df_filtrado)
+        if tabla.empty:
+            return html.Div(f"No hay datos para {delito_seleccionado}"), {"display": "block"}
+        tabla_md = (
+            html.H2(f"Tiempos Medios: {delito_seleccionado}", style={"textAlign": "center"}),
+            dcc.Markdown(
+                """
+| Borough         | Minutos llegada | Minutos duración |
+|-----------------|----------------|------------------|
+""" + '\n'.join([
+                    f"| {row['BORO_NM']} | {row['tiempo_llegada']:.2f} | {row['tiempo_duracion']:.2f} |" for _, row in tabla.iterrows()
+                ]), style={"fontSize": "18px", "fontFamily": "Arial"}
+            )
+        )
+        return tabla_md, {"display": "block"}
+
+    return None, {"display": "none"}
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8050, debug=False)
