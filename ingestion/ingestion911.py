@@ -6,7 +6,7 @@ import pandas as pd
 
 url_datos = "https://data.cityofnewyork.us/resource/n2zq-pubd.json"
 
-url_api = os.getenv("API_URL", "http://api:5000") + "/ingest/911_calls"
+url_api = "http://api:5000/ingest/911_calls"
 
 cont = 0
 def procesar_datos(cont):
@@ -84,6 +84,7 @@ def procesar_datos(cont):
                 print(f"Error API ({res.status_code}): {res.text}")
         except requests.exceptions.RequestException as e:
             print(f"Error enviando a API: {e}")
+            time.sleep(600)
     else:
         print("No se generaron datos para insertar.")
     return cont
