@@ -5,4 +5,4 @@ WORKDIR /app
 COPY . .
 RUN pip install --no-cache-dir -r requirements.txt
 
-cmd ["python", "ingestion911.py"]
+CMD ["python", "ingestion911.py"]
