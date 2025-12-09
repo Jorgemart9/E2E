@@ -16,8 +16,6 @@ services:
     depends_on:
       - db
     restart: unless-stopped
-    networks:
-      - kafka-net
     
   api:
     build:
@@ -30,8 +28,6 @@ services:
     depends_on:
       db:
         condition: service_healthy
-    networks:
-      - kafka-net
     
   dbt:
     build:
@@ -44,12 +40,10 @@ services:
     image: postgres:17-alpine
     env_file: .env
     volumes:
+      - ./docker-init:/docker-entrypoint-initdb.d
       - postgres-data:/var/lib/postgresql/data
-      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
     ports:
       - "5432:5432"
-    networks:
-      - kafka-net
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U $$POSTGRES_USER" ]
       interval: 2s
