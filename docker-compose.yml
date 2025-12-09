@@ -65,6 +65,12 @@ services:
       - db
 
   # Ingestion
+  ingestion:
+    build:
+      context: ./ingestion
+      dockerfile: Dockerfile.pyIngestion
+    image: ingestion:latest
+
   ingestion_311:
     build:
       context: ./ingestion
@@ -89,12 +95,12 @@ services:
       - db
     networks:
       - dp1_network
+  
 
-  # Dashboard
-  dashboard:
+  visualizacion:
     build:
-      context: ./dashboard
-      dockerfile: Dockerfile.pyDASH
+      context: ./visualizacion
+      dockerfile: Dockerfile.Dashboard
     container_name: plotly_dashboard
     ports:
       - "8050:8050"
