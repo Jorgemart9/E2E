@@ -35,10 +35,20 @@ services:
     
   dbt:
     build:
-      context: ./dbt
-      dockerfile: Dockerfile.pyDBT
-    image: dbt:latest
-    profiles: [ "workers" ]
+      context: .
+      dockerfile: dockerfile
+    pull_policy: build
+    container_name: dbt
+    volumes:
+        - ./dbt:/usr/app/dbt
+        - ~/.dbt:/root/.dbt
+    working_dir: /usr/app/dbt
+    command: >
+        bash -c "dbt deps && dbt build --target dev"
+    depends_on:
+        - db
+    networks:
+      - kafka-net
   
   db:
     image: postgres:17-alpine
