@@ -1,7 +1,7 @@
 \c new_york;
 
 
-CREATE TABLE icad_events (
+CREATE TABLE 911_calls (
     cad_evnt_id        TEXT PRIMARY KEY,
     create_date        TIMESTAMP,
     incident_date      TIMESTAMP,
