@@ -16,104 +16,49 @@ def procesar_datos(cont):
     except Exception as e:
         print(f"Error descargando: {e}")
         return
-
-
-
-
-    print(f"Transformando {len(data)} registros (Wide -> Long)...")
-    
     lista_inserciones = []
-    
     for datos in data:
         try:
-            municipio = int(datos['MUNICIPIO'])
-            estacion = datos['ESTACION']
-            magnitud = datos['MAGNITUD']
-            punto = datos['PUNTO_MUESTREO']
-            ano = int(datos['ANO'])
-            mes = int(datos['MES'])
-            dia = int(datos['DIA'])
+            cad_evnt_id = datos["cad_evnt_id"]
+            create_date = datos["create_date"]
+            incident_date = datos["incident_date"]
+            incident_time = datos["incident_time"]
+            nypd_pct_cd = datos["nypd_pct_cd"]
+            boro_nm = datos["boro_nm"]
+            patrl_boro_nm = datos["patrl_boro_nm"]
+            geo_cd_x = datos["geo_cd_x"]
+            geo_cd_y = datos["geo_cd_y"]
+            radio_code = datos["radio_code"]
+            typ_desc = datos["typ_desc"]
+            zip_jobs = datos["zip_jobs"]
+            add_ts = datos["add_ts"]
+            disp_ts = datos["disp_ts"]
+            arrivd_ts = datos["arrivd_ts"]
+            closng_ts = datos["closng_ts"]
+            latitude = datos["latitude"]
+            longitude = datos["longitude"]
 
-            for hora in range(1, 25):
-                clave_valor = f"H{hora:02d}"
-                clave_validacion = f"V{hora:02d}"
+            fila = {
+                'CAD_EVNT_ID': cad_evnt_id,
+                'CREATE_DATE': create_date,
+                'INCIDENT_DATE': incident_date,
+                'INCIDENT_TIME': incident_time,
+                'NYPD_PCT_CD': nypd_pct_cd,
+                'BORO_NM': boro_nm,
+                'PATRL_BORO_NM': patrl_boro_nm,
+                'GEO_CD_X': geo_cd_x,
+                'GEO_CD_Y': geo_cd_y,
+                'RADIO_CODE': radio_code,
+                'TYPE_DESC': typ_desc,
+                'ZIP_JOBS': zip_jobs,
+                'ADD_TS': add_ts,
+                'DISP_TS': disp_ts,
+                'ARRIVD_TS': arrivd_ts,
+                'CLOSNG_TS': closng_ts,
+                'LATITUDE': latitude,
+                'LONGITUDE': longitude
+            }
+            lista_inserciones.append(fila)
+    except Exception as e:
+        print(f"Error procesando datos: {e}")
 
-                if clave_valor in datos:
-                    valor_hora = float(datos[clave_valor])
-                    validacion_hora = datos[clave_validacion]
-
-                    fila = {
-                        'MUNICIPIO': municipio,
-                        'ESTACION': estacion,
-                        'MAGNITUD': magnitud,
-                        'PUNTO_MUESTREO': punto,
-                        'ANO': ano,
-                        'MES': mes,
-                        'DIA': dia,
-                        'HORA': hora,
-                        'VALOR': valor_hora,
-                        'VALIDACION': validacion_hora,
-                        'LAT': 0.0,
-                        'LON': 0.0
-                    }
-                    lista_inserciones.append(fila)
-        except ValueError:
-            continue
-
-    if lista_inserciones:
-        df = pd.DataFrame(lista_inserciones)
-        df = df[(df['VALIDACION'] != 'N')]
-        if cont == 0:
-            buffer = io.StringIO()
-
-            columnas = ['MUNICIPIO', 'ESTACION', 'MAGNITUD', 'PUNTO_MUESTREO', 
-                        'ANO', 'MES', 'DIA', 'HORA', 'VALOR', 'VALIDACION', 'LAT', 'LON']
-            
-            df[columnas].to_csv(buffer, index=False, header=False, encoding = 'utf-8')
-            buffer.seek(0)
-
-            print(f"Enviando {len(df)} filas procesadas a la API...")
-            files = {'file': ('data.csv', buffer)}
-            res = requests.post(INTERNAL_API_URL, files=files)
-
-            if res.status_code == 201:
-                print("Datos insertados correctamente.")
-                cont += 1
-            else:
-                print(f"Error API: {res.text}")
-        else:
-            columnas_agrupacion = ['ESTACION', 'MAGNITUD', 'ANO', 'MES', 'DIA']
-            indices_ultima_hora = df.groupby(columnas_agrupacion)['HORA'].idxmax()
-            df = df.loc[indices_ultima_hora]
-            print(len(df))
-            buffer = io.StringIO()
-
-            columnas = ['MUNICIPIO', 'ESTACION', 'MAGNITUD', 'PUNTO_MUESTREO', 
-                        'ANO', 'MES', 'DIA', 'HORA', 'VALOR', 'VALIDACION', 'LAT', 'LON']
-            
-            df[columnas].to_csv(buffer, index=False, header=False, encoding = 'utf-8')
-            buffer.seek(0)
-
-            print(f"Enviando {len(df)} filas procesadas a la API de Madrid...")
-            files = {'file': ('data.csv', buffer)}
-            res = requests.post(INTERNAL_API_URL, files=files)
-
-            if res.status_code == 201:
-                print("Datos insertados correctamente de Madrid.")
-                cont += 1
-            else:
-                print(f"Error API: {res.text}")
-    else:
-        print("No se generaron datos para insertar.")
-    return cont
-
-if __name__ == "__main__":
-    print("--- Iniciando ejecución orquestada por Airflow ---")
-
-    if cont is not None:
-        cont = procesar_datos(cont)
-        print("Procesamiento finalizado con éxito.")
-    else:
-        print("[ERROR] No se han descargado datos, saltando procesamiento.", flush=True)
-            
-    print("--- Fin del script ---")
