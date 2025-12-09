@@ -34,7 +34,7 @@ services:
   dbt:
     build:
       context: .
-      dockerfile: dockerfile.DBT
+      dockerfile: Dockerfile.DBT
     pull_policy: build
     container_name: dbt
     volumes:
@@ -65,7 +65,7 @@ services:
 
   dashboard:
     build: ./dashboard
-    dockerfile: Dockerfile.pyDash
+    dockerfile: Dockerfile.pyDASH
     container_name: plotly_dashboard
     ports:
       - "8050:8050"
