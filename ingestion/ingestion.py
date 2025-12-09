@@ -8,6 +8,8 @@ url_datos = "https://data.cityofnewyork.us/resource/n2zq-pubd.json"
 
 url_api = os.getenv("API_URL", "http://api:5000") + "/ingest/911_calls"
 
+
+
 cont = 0
 def procesar_datos(cont):
     print("Descargando datos...")
@@ -20,24 +22,24 @@ def procesar_datos(cont):
     lista_inserciones = []
     for datos in data:
         try:
-            cad_evnt_id = datos["cad_evnt_id"]
-            create_date = datos["create_date"]
-            incident_date = datos["incident_date"]
-            incident_time = datos["incident_time"]
-            nypd_pct_cd = datos["nypd_pct_cd"]
-            boro_nm = datos["boro_nm"]
-            patrl_boro_nm = datos["patrl_boro_nm"]
-            geo_cd_x = datos["geo_cd_x"]
-            geo_cd_y = datos["geo_cd_y"]
-            radio_code = datos["radio_code"]
-            typ_desc = datos["typ_desc"]
-            cip_jobs = datos["cip_jobs"]
-            add_ts = datos["add_ts"]
-            disp_ts = datos["disp_ts"]
-            arrivd_ts = datos["arrivd_ts"]
-            closng_ts = datos["closng_ts"]
-            latitude = datos["latitude"]
-            longitude = datos["longitude"]
+            cad_evnt_id = datos.get("cad_evnt_id")
+            create_date = datos.get("create_date")
+            incident_date = datos.get("incident_date")
+            incident_time = datos.get("incident_time")
+            nypd_pct_cd = datos.get("nypd_pct_cd")
+            boro_nm = datos.get("boro_nm")
+            patrl_boro_nm = datos.get("patrl_boro_nm")
+            geo_cd_x = datos.get("geo_cd_x")
+            geo_cd_y = datos.get("geo_cd_y")
+            radio_code = datos.get("radio_code")
+            typ_desc = datos.get("typ_desc")
+            cip_jobs = datos.get("cip_jobs")
+            add_ts = datos.get("add_ts")
+            disp_ts = datos.get("disp_ts")
+            arrivd_ts = datos.get("arrivd_ts")
+            closng_ts = datos.get("closng_ts")
+            latitude = datos.get("latitude")
+            longitude = datos.get("longitude")
             fila = {
                 'cad_envt_id': cad_evnt_id,
                 'create_date': create_date,
@@ -59,7 +61,8 @@ def procesar_datos(cont):
                 'longitude': longitude
             }
             lista_inserciones.append(fila)
-        except ValueError:
+        except Exception as e:
+            print(f"Error procesando fila: {e}")
             continue
     if lista_inserciones: 
         df = pd.DataFrame(lista_inserciones)
