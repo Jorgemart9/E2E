@@ -49,8 +49,8 @@ def procesar_datos(cont):
                 'geo_cd_x': geo_cd_x,
                 'geo_cd_y': geo_cd_y,
                 'radio_code': radio_code,
-                'type_desc': typ_desc,
-                'zip_jobs': zip_jobs,
+                'typ_desc': typ_desc,
+                'cip_jobs': zip_jobs,
                 'add_ts': add_ts,
                 'disp_ts': disp_ts,
                 'arrivd_ts': arrivd_ts,
@@ -62,41 +62,27 @@ def procesar_datos(cont):
         except ValueError:
             continue
     if lista_inserciones: 
-        if cont == 0:
-            buffer = io.StringIO()
-            columnas = ['cad_envt_id', 'create_date', 'incident_date', 'incident_time', 'nypd_pct_cd', 'boro_nm', 'patrl_boro_nm', 'geo_cd_x', 'geo_cd_y', 'radio_code', 'type_desc', 'zip_jobs', 'add_ts', 'disp_ts', 'arrivd_ts', 'closng_ts', 'latitude', 'longitude']
-            
-            df[columnas].to_csv(buffer, index=False, header=False, encoding = 'utf-8')
-            buffer.seek(0)
-
-            print(f"Enviando {len(df)} filas procesadas a la API...")
-            files = {'file': ('data.csv', buffer)}
-            res = requests.post(INTERNAL_API_URL, files=files)
-
+        df = pd.DataFrame(lista_inserciones)
+        columnas = [
+            'cad_envt_id', 'create_date', 'incident_date', 'incident_time', 
+            'nypd_pct_cd', 'boro_nm', 'patrl_boro_nm', 'geo_cd_x', 'geo_cd_y', 
+            'radio_code', 'typ_desc', 'cip_jobs', 'add_ts', 'disp_ts', 
+            'arrivd_ts', 'closng_ts', 'latitude', 'longitude'
+        ]
+        buffer = io.StringIO()
+        df[columnas].to_csv(buffer, index=False, header=True, encoding='utf-8')
+        buffer.seek(0)
+        print(f"Enviando {len(df)} registros procesados a la API...")
+        files = {'file': ('data.csv', buffer, 'text/csv')}
+        try:
+            res = requests.post(url_api, files=files, timeout=30)
             if res.status_code == 201:
                 print("Datos insertados correctamente.")
                 cont += 1
             else:
-                print(f"Error API: {res.text}")
-        else:
-            columnas_agrupacion = ['cad_envt_id', 'create_date', 'incident_date', 'incident_time', 'nypd_pct_cd', 'boro_nm', 'patrl_boro_nm', 'geo_cd_x', 'geo_cd_y', 'radio_code', 'type_desc', 'zip_jobs', 'add_ts', 'disp_ts', 'arrivd_ts', 'closng_ts', 'latitude', 'longitude']
-            print(len(df))
-            buffer = io.StringIO()
-
-            columnas = ['cad_envt_id', 'create_date', 'incident_date', 'incident_time', 'nypd_pct_cd', 'boro_nm', 'patrl_boro_nm', 'geo_cd_x', 'geo_cd_y', 'radio_code', 'type_desc', 'zip_jobs', 'add_ts', 'disp_ts', 'arrivd_ts', 'closng_ts', 'latitude', 'longitude']
-            
-            df[columnas].to_csv(buffer, index=False, header=False, encoding = 'utf-8')
-            buffer.seek(0)
-
-            print(f"Enviando {len(df)} filas procesadas a la API...")
-            files = {'file': ('data.csv', buffer)}
-            res = requests.post(url_api, files=files)
-
-            if res.status_code == 201:
-                print("Datos insertados correctamente.")
-                cont += 1
-            else:
-                print(f"Error API: {res.text}")
+                print(f"Error API ({res.status_code}): {res.text}")
+        except requests.exceptions.RequestException as e:
+            print(f"Error enviando a API: {e}")
     else:
         print("No se generaron datos para insertar.")
     return cont
@@ -108,7 +94,7 @@ if __name__ == "__main__":
         cont = procesar_datos(cont)
         print("Procesamiento finalizado con éxito.")
     else:
-        print("[ERROR] No se han descargado datos, saltando procesamiento.", flush=True)
+        print("No se han descargado datos, saltando procesamiento.")
             
     print("--- Fin del script ---")
 
