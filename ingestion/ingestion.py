@@ -59,10 +59,8 @@ def procesar_datos(cont):
                 'longitude': longitude
             }
             lista_inserciones.append(fila)
-        except Exception as e:
-            print(f"Error procesando fila: {e}")
-    except ValueError:
-        continue
+        except ValueError:
+            continue
     if lista_inserciones: 
         if cont == 0:
             buffer = io.StringIO()
