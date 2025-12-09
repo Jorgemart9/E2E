@@ -1,7 +1,7 @@
 \c new_york;
 
 
-CREATE TABLE emergency_calls (
+CREATE TABLE IF NOT EXISTS emergency_calls (
     cad_evnt_id        TEXT PRIMARY KEY,
     create_date        TIMESTAMP,
     incident_date      TIMESTAMP,
