@@ -22,8 +22,4 @@ RUN pip install dbt-postgres
 # 6. Copiamos todos los archivos de tu carpeta 'dbt' al contenedor
 COPY . .
 
-# 7. IMPORTANTE: Le decimos a dbt que busque el profiles.yml en la carpeta actual
-ENV DBT_PROFILES_DIR=/usr/app/dbt
-
-# 8. Comando por defecto: verifica la conexión al arrancar
-CMD ["dbt", "debug"]
+CMD ["dbt", "build", "--target", "dev"]
