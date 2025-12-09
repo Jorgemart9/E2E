@@ -1,0 +1,17 @@
+FROM python:3.11-slim
+
+RUN apt-get update && apt-get install -y \
+    libpq-dev \
+    && rm -rf /var/lib/apt/lists/* \
+    git
+
+RUN useradd -m dashboarduser
+WORKDIR /app/dashboard
+COPY dashboard.py .
+COPY requirements.txt .
+COPY NYPD_Calls_for_Service_(Year_to_Date)_20251209-2.csv .
+RUN pip install --no-cache-dir -r requirements.txt
+RUN chown -R dashboarduser:dashboarduser /app/dashboard
+USER dashboarduser
+EXPOSE 8050
+CMD ["python", "dashboard.py"]
