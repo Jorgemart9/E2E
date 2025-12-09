@@ -9,11 +9,13 @@ services:
     ports:
       - "5432:5432"
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER"]
+      test: [ "CMD-SHELL", "pg_isready -U $$POSTGRES_USER" ]
       interval: 2s
       timeout: 2s
       retries: 15
     restart: "no"
+    networks:
+      - dp1_network
 
   # pgAdmin
   pgadmin:
@@ -37,12 +39,15 @@ services:
     build:
       context: ./API
       dockerfile: Dockerfile.API
+    container_name: api
     ports:
       - "5000:5000"
     env_file: .env
     depends_on:
       db:
         condition: service_healthy
+    networks:
+      - dp1_network
 
   # DBT
   dbt:
@@ -72,6 +77,7 @@ services:
       dockerfile: Dockerfile.311
     image: ingestion_311:latest
     container_name: ingestion_311
+    env_file: .env
     depends_on:
       - db
     networks:
@@ -84,6 +90,7 @@ services:
       dockerfile: Dockerfile.911
     image: ingestion_911:latest
     container_name: ingestion_911
+    env_file: .env
     depends_on:
       - db
     networks:
@@ -105,6 +112,7 @@ services:
 volumes:
   postgres-data:
   pgadmin_data:
+
 
 networks:
   dp1_network:
