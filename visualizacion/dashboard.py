@@ -25,26 +25,24 @@ fig = go.Figure()
 
 for tipo_delito in df_final['TYP_DESC'].unique():
     df_tipo = df_final[df_final['TYP_DESC'] == tipo_delito]
-    
     colors = [(df_tipo['count'].values[i] - min_count) / (max_count - min_count) for i in range(len(df_tipo))]
-    
     fig.add_trace(go.Scattermapbox(
         lat=df_tipo['Latitud'],
         lon=df_tipo['Longitud'],
-        mode='markers',
+        mode='markers+text',
         marker=dict(
-            size=(df_tipo['count'] / max_count) * 30 + 5,  # Escalar tamaño entre 5 y 35
+            size=(df_tipo['count'] / max_count) * 120 + 30,  # Mucho más grandes
             color=df_tipo['count'],
             colorscale='RdYlGn_r',
-            showscale=True,
+            showscale=False,
             cmin=min_count,
             cmax=max_count,
-            colorbar=dict(title="Delitos"),
             opacity=0.8
         ),
-        text=[f"Borough: {borough}<br>Tipo: {tipo}<br>Delitos: {count}" 
-              for borough, tipo, count in zip(df_tipo['BORO_NM'], df_tipo['TYP_DESC'], df_tipo['count'])],
-        hovertemplate='%{text}<extra></extra>',
+        text=df_tipo['BORO_NM'],
+        textposition='top center',
+        hovertemplate='<b>%{text}</b><br>Delitos: %{customdata}<extra></extra>',
+        customdata=df_tipo['count'],
         name=tipo_delito
     ))
 
@@ -55,7 +53,8 @@ fig.update_layout(
         center=dict(lat=40.7128, lon=-74.0060)
     ),
     margin=dict(r=0, t=80, l=0, b=0),
-    title="Mapa de Llamadas NYPD (Filtrable)"
+    title="Mapa de Llamadas NYPD (Filtrable)",
+    showlegend=False
 )
 
 buttons = []
@@ -63,8 +62,10 @@ buttons = []
 buttons.append(dict(
     label="Todos",
     method="update",
-    args=[{"visible": [True] * len(fig.data)},
-          {"title": "Todos los delitos"}]
+    args=[
+        {"visible": [True] * len(fig.data)},
+        {"title": "Todos los delitos", "showlegend": False}
+    ]
 ))
 
 for i, tipo_delito in enumerate(df_final['TYP_DESC'].unique()):
@@ -79,7 +80,7 @@ for i, tipo_delito in enumerate(df_final['TYP_DESC'].unique()):
         method="update",
         args=[
             {"visible": visibilidad},
-            {"title": f"Delito: {tipo_delito} - Total: {total_delitos_tipo}"}
+            {"title": f"Delito: {tipo_delito} - Total: {total_delitos_tipo}", "showlegend": False}
         ]
     ))
 
