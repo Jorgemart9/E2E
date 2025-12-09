@@ -121,7 +121,7 @@ def ingest_311_calls():
             latitude, longitude, location
         )
         FROM STDIN
-        WITH (FORMAT CSV, HEADER)
+        WITH (FORMAT CSV, HEADER, DELIMITER ',')  -- <-- ¡ESTE ES EL CAMBIO!
         """
         
         # 4. Ejecutamos el copy dentro de un cursor transaccional
