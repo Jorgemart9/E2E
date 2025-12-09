@@ -1,6 +1,11 @@
 version: "3.9"
 
 services:
+  ingestion:
+    build:
+      context: ./ingestion
+      dockerfile: Dockerfile.pyIngestion
+    image: ingestion:latest
   pgadmin:
     image: dpage/pgadmin4:latest
     container_name: pgadmin
