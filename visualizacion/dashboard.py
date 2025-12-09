@@ -71,12 +71,15 @@ for i, tipo_delito in enumerate(df_final['TYP_DESC'].unique()):
     visibilidad = [False] * len(fig.data)
     visibilidad[i] = True
     
+    # Obtener el total de delitos de este tipo
+    total_delitos_tipo = df_final[df_final['TYP_DESC'] == tipo_delito]['count'].sum()
+    
     buttons.append(dict(
-        label=tipo_delito,
+        label=f"{tipo_delito} ({total_delitos_tipo})",
         method="update",
         args=[
             {"visible": visibilidad},
-            {"title": f"Delito: {tipo_delito}"}
+            {"title": f"Delito: {tipo_delito} - Total: {total_delitos_tipo}"}
         ]
     ))
 
