@@ -20,14 +20,11 @@ df_final = pd.merge(df_agrupado, df_coords, on='BORO_NM', how='left')
 min_count = df_final['count'].min()
 max_count = df_final['count'].max()
 
-# Crear figura vacía
 fig = go.Figure()
 
-# Agregar trazos para cada tipo de delito
 for tipo_delito in df_final['TYP_DESC'].unique():
     df_tipo = df_final[df_final['TYP_DESC'] == tipo_delito]
     
-    # Mapear valores de count a colores (rojo para alto, verde para bajo)
     colors = [(df_tipo['count'].values[i] - min_count) / (max_count - min_count) for i in range(len(df_tipo))]
     
     fig.add_trace(go.Scattermapbox(
@@ -50,7 +47,6 @@ for tipo_delito in df_final['TYP_DESC'].unique():
         name=tipo_delito
     ))
 
-# Configurar el layout del mapa
 fig.update_layout(
     mapbox=dict(
         style='carto-positron',
@@ -61,10 +57,8 @@ fig.update_layout(
     title="Mapa de Llamadas NYPD (Filtrable)"
 )
 
-# 6. AÑADIR DROPDOWN (Lógica de filtrado por tipo de delito)
 buttons = []
 
-# Botón para "Ver Todos"
 buttons.append(dict(
     label="Todos",
     method="update",
@@ -72,7 +66,6 @@ buttons.append(dict(
           {"title": "Todos los delitos"}]
 ))
 
-# Botones para cada tipo de delito individualmente
 for i, tipo_delito in enumerate(df_final['TYP_DESC'].unique()):
     visibilidad = [False] * len(fig.data)
     visibilidad[i] = True
@@ -86,7 +79,6 @@ for i, tipo_delito in enumerate(df_final['TYP_DESC'].unique()):
         ]
     ))
 
-# Configurar el diseño del menú en el mapa
 fig.update_layout(
     updatemenus=[
         dict(
@@ -100,7 +92,7 @@ fig.update_layout(
             yanchor="top"
         ),
     ],
-    margin={"r":0,"t":80,"l":0,"b":0} # Ajustar margen superior para que quepa el menú
+    margin={"r":0,"t":80,"l":0,"b":0}
 )
 
 fig.show()
