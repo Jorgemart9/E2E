@@ -66,3 +66,13 @@ services:
       timeout: 2s
       retries: 15
     restart: "no"
+
+  dashboard:
+    build: ./dashboard
+    container_name: plotly_dashboard
+    ports:
+      - "8050:8050"
+    depends_on:
+      - postgres
+    networks:
+      - dp1_network
